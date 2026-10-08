@@ -44,6 +44,10 @@ namespace Framework.Data
         [Tooltip("Horizontal push force when leaping off a wall")]
         public float wallJumpForce = 12f;
 
+        [Header("Wall Mechanics")]
+        [Tooltip("Duration in seconds where player air steering cannot override the wall jump kick impulse")]
+        public float wallJumpInputLockout = 0.18f;
+
         // Derived physical values calculated dynamically
         public float InitialJumpVelocity => (2f * jumpHeight) / timeToJumpApex;
         public float BaseGravity => (2f * jumpHeight) / Mathf.Pow(timeToJumpApex, 2f);

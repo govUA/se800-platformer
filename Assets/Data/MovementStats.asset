@@ -25,3 +25,4 @@ MonoBehaviour:
   jumpBufferTime: 0.12
   wallSlideSpeed: 3
   wallJumpForce: 12
+  wallJumpInputLockout: 0.18
