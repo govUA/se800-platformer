@@ -473,26 +473,6 @@ Transform:
   - {fileID: 1047016097}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &700000003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 550749253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 870aa82ca8b54df78524745f86e84f00, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  behaviourType: 1
-  player: {fileID: 0}
-  chaseDetectionRange: 6
-  chaseSpeedMultiplier: 1.6
-  jumpTriggerRange: 4
-  jumpCooldown: 1.5
-  jumpForce: 6
-  jumpHeight: 9
 --- !u!1 &577261332
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,6 +619,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &700000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1313598038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0ce8b0d41424f8fb8426d081439af9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashSpeed: 18
+  dashDuration: 0.18
+  dashCooldown: 0.6
+--- !u!114 &700000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1313598038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06be7b9758ad4f0b8f6328130f85f99f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extraJumps: 1
+  extraJumpVelocityMultiplier: 0.9
+--- !u!114 &700000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 550749253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 870aa82ca8b54df78524745f86e84f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  behaviourType: 1
+  player: {fileID: 1313598043}
+  chaseDetectionRange: 6
+  chaseSpeedMultiplier: 1.6
+  jumpTriggerRange: 4
+  jumpCooldown: 1.5
+  jumpForce: 6
+  jumpHeight: 9
 --- !u!1 &821360102
 GameObject:
   m_ObjectHideFlags: 0
@@ -958,35 +987,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &700000001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1313598038}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0ce8b0d41424f8fb8426d081439af9e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  dashSpeed: 18
-  dashDuration: 0.18
-  dashCooldown: 0.6
---- !u!114 &700000002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1313598038}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06be7b9758ad4f0b8f6328130f85f99f, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  extraJumps: 1
-  extraJumpVelocityMultiplier: 0.9
 --- !u!1 &1629768795
 GameObject:
   m_ObjectHideFlags: 0
