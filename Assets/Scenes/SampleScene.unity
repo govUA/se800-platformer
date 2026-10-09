@@ -271,6 +271,7 @@ GameObject:
   - component: {fileID: 550749256}
   - component: {fileID: 550749255}
   - component: {fileID: 550749254}
+  - component: {fileID: 700000003}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -472,6 +473,26 @@ Transform:
   - {fileID: 1047016097}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &700000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 550749253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 870aa82ca8b54df78524745f86e84f00, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  behaviourType: 1
+  player: {fileID: 0}
+  chaseDetectionRange: 6
+  chaseSpeedMultiplier: 1.6
+  jumpTriggerRange: 4
+  jumpCooldown: 1.5
+  jumpForce: 6
+  jumpHeight: 9
 --- !u!1 &577261332
 GameObject:
   m_ObjectHideFlags: 0
