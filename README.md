@@ -1,174 +1,71 @@
-# 2D Platformer Framework — Extension Guide
+# 2D Precision Platformer Project
 
-Welcome to the Platformer Framework. This project is structured so you can implement new Player mechanics and Enemy
-behaviours inside `Assets/Extensions/` without modifying any files in `Assets/Framework/`.
+A responsive, modular 2D platformer template developed in Unity. The project combines game feel techniques (variable
+jumps, coyote time, input buffering) with a decoupled state-machine architecture that is easy to extend.
 
----
+## Documentation
 
-## 1. How to Add a New Player Mechanic
+Depending on what you are looking for, refer to the following documentation:
 
-All player movement states inherit from `BasePlayerState` and run through the `PlayerController`.
+* [**Player Manual & Game Guide**](player_guide.md)  
+  A gameplay and mechanics overview for players and level designers. Covers primary movement controls, advanced
+  mobility (dash, double-jump, wall-sliding), and enemy behaviors.
+* [**Framework Extension Guide**](extension_guide.md)  
+  A developer guide detailing how to build custom player abilities and enemy AI behaviors inside `Assets/Extensions/`
+  without altering core framework code.
 
-### Step 1: Create your State class
+## Project Architecture
 
-Create a new script inside `Assets/Extensions/` (e.g., `GlideState.cs` or `DashState.cs`):
-
-```csharp
-using UnityEngine;
-using Framework.Player;
-
-namespace Extensions
-{
-    public class GlideState : BasePlayerState
-    {
-        public GlideState(PlayerContext context) : base(context)
-        {
-        }
-
-        public override void Enter()
-        {
-            // Reduce gravity or set target glide velocity
-            Context.Motor.SetGravityMultiplier(0.2f);
-        }
-
-        public override void Tick()
-        {
-            // Transition back to Grounded if we hit the floor
-            if (Context.Sensors.IsGrounded)
-            {
-                Context.Controller.ChangeState(Context.Controller.GroundedState);
-                return;
-            } // Cancel glide on button release
-
-            if (Context.Input.JumpReleased)
-            {
-                Context.Controller.ChangeState(Context.Controller.AirborneState);
-                return;
-            }
-        }
-
-        public override void FixedTick()
-        {
-            float targetSpeed = Context.Input.HorizontalInput * Context.Stats.walkSpeed;
-            Context.Motor.MoveHorizontal(targetSpeed, Context.Stats.acceleration);
-        }
-
-        public override void Exit()
-        {
-            Context.Motor.SetGravityMultiplier(1f);
-        }
-    }
-}
+```
+Assets/
+├── Framework/                  # Immutable core framework
+│   ├── Core/
+│   │   ├── Input/              # Input provider interfaces & bindings
+│   │   ├── Motor/              # 2D physics and custom gravity execution
+│   │   ├── Sensors/            # Ground, ledge, and wall detection
+│   │   └── StateMachine/       # Base finite state machine interfaces
+│   ├── Data/                   # Movement tuning ScriptableObjects
+│   ├── Enemy/                  # Base enemy controller & stock behaviors
+│   └── Player/                 # Core player controller & basic states
+└── Extensions/                 # Custom gameplay features & modular abilities
+    ├── DashAbility.cs          # Horizontal impulse dash
+    ├── DoubleJumpAbility.cs    # Air jump mechanic
+    ├── ChaseBehaviour.cs       # Proximity-based enemy aggression
+    └── JumpToPlayerBehaviour.cs# Predictive enemy leap attack
 ```
 
-### Step 2: Hook up the State without modifying Core
+## Assignment Progress & Collaboration Workflow
 
-Create an extension component in `Assets/Extensions/` and attach it to the `Player` GameObject:
+This project was developed within [**Unity Product Lab (Week 1 — Movement Release)**](https://teaching.kse.org.ua/mod/assign/view.php?id=135128) by a two-person team operating under
+the [**Platformer Framework Architect**](https://github.com/govUA) + [**AI-assisted Framework Developer**](https://github.com/KristinaRiabova304) role distribution:
 
-```csharp
-using UnityEngine;
-using Framework.Player;
+### Team Role Breakdown
 
-namespace Extensions
-{
-    [RequireComponent(typeof(PlayerController))]
-    public class PlayerAbilitiesExtension : MonoBehaviour
-    {
-        private PlayerController _controller;
-        public GlideState GlideState { get; private set; }
+* **Platformer Framework Architect**:
+    * Designed the core modular architecture inside `Assets/Framework/` around a decoupled Finite State Machine (
+      `IState`, `BasePlayerState`).
+    * Built custom motor physics (`ActorMotor2D`) with formula-driven jump kinematics and dynamic gravity scaling (
+      variable jump height, fast-fall multipliers).
+    * Implemented environmental query sensors (`EnvironmentDetector2D`) for ledge, ground, and wall detection.
+    * Set up Inspector-driven configuration through `MovementStatsSO` to fine-tune game feel variables (coyote time,
+      jump buffer, air control, wall kick impulses).
+    * Exposed clean extension points for custom abilities and enemy behaviors without requiring edits to core systems.
 
-        private void Awake()
-        {
-            _controller = GetComponent<PlayerController>();
-            GlideState = new GlideState(_controller.Context);
-        }
+* **AI-assisted Framework Developer**:
+    * Consumed the framework as a downstream user via the public API and extension interfaces.
+    * Leveraged AI tooling for architecture comprehension, interface matching, and rapid iteration.
+    * Implemented new Player abilities inside `Assets/Extensions/`:
+        * `DashAbility` & `DashState`: Horizontal dash impulse with temporary gravity suspension and cooldown tracking.
+        * `DoubleJumpAbility`: Multi-jump tracking integrated cleanly with airborne state transitions.
+    * Implemented reactive Enemy AI behaviors via `IEnemyBehaviour`:
+        * `ChaseBehaviour`: Proximity detection and pursuit while respecting platform borders and ledges.
+        * `JumpToPlayerBehaviour`: Grounded distance checks and timed leap impulses aimed at the player.
 
-        private void Update()
-        {
-            if (_controller.CurrentState == _controller.AirborneState && _controller.Context.Input.JumpPressed &&
-                _controller.Context.Motor.Velocity.y < 0f)
-            {
-                _controller.ChangeState(GlideState);
-            }
-        }
-    }
-}
-```
+### Git Discipline & Integration Workflow
 
----
-
-## 2. How to Add a New Enemy Behaviour
-
-Enemy logic is decoupled through `IEnemyBehaviour`.
-
-### Step 1: Implement `IEnemyBehaviour`
-
-Create a new behaviour script inside `Assets/Extensions/` (e.g., `JumpAttackBehaviour.cs`):
-
-```csharp
-using UnityEngine;
-using Framework.Enemy;
-
-namespace Extensions
-{
-    public class JumpAttackBehaviour : IEnemyBehaviour
-    {
-        private readonly Transform _playerTransform;
-        private float _cooldownTimer;
-
-        public JumpAttackBehaviour(Transform playerTransform)
-        {
-            _playerTransform = playerTransform;
-        }
-
-        public void Enter(BaseEnemy enemy)
-        {
-            _cooldownTimer = 1.5f;
-        }
-
-        public void Tick(BaseEnemy enemy)
-        {
-            _cooldownTimer -= Time.deltaTime;
-            if (_cooldownTimer <= 0f && enemy.Sensors.IsGrounded)
-            {
-                _cooldownTimer = 2f;
-                if ((_playerTransform.position.x > enemy.transform.position.x && enemy.FacingDirection < 0) \vert{
-                }\vert{
-                }
-                (_playerTransform.position.x < enemy.transform.position.x && enemy.FacingDirection > 0)) {
-                    enemy.FlipDirection();
-                }
-                enemy.Motor.ApplyImpulse(new Vector2(enemy.FacingDirection * 6f, 10f));
-            }
-        }
-
-        public void FixedTick(BaseEnemy enemy)
-        {
-        }
-
-        public void Exit(BaseEnemy enemy)
-        {
-        }
-    }
-}
-```
-
-### Step 2: Assign it to an Enemy
-
-Assign via `enemy.SetBehaviour(new JumpAttackBehaviour(playerTransform))` at runtime or on start.
-
----
-
-## 3. Useful Core APIs
-
-* **Sensors (`Context.Sensors` / `enemy.Sensors`)**:
-    * `IsGrounded`: true when standing on ground.
-    * `IsOnWall`: true when touching a wall.
-    * `WallDirection`: `-1` (left wall), `1` (right wall), `0` (none).
-* **Motor (`Context.Motor` / `enemy.Motor`)**:
-    * `SetVelocityX(float x)`: Directly sets horizontal speed.
-    * `SetVelocityY(float y)`: Directly sets vertical speed.
-    * `ApplyImpulse(Vector2 force)`: Replaces linear velocity immediately.
-    * `SetGravityMultiplier(float mult)`: Modifies downward pull.
-* **Stats (`Context.Stats`)**:
-    * ScriptableObject values for run speeds, jump apex parameters, and timings.
+* **Separation of Concerns**: Complete decoupling between `Assets/Framework/` (immutable core) and
+  `Assets/Extensions/` (modular mechanics), verifying that extension points work as intended.
+* **Feature Branches & Pull Requests**: Development was partitioned into logical feature branches with discrete PRs
+  submitted for the core state machine, motor physics, abilities, and enemy behaviors.
+* **Movement Release Validation**: Tuned control responsiveness and mechanics transitions in a dedicated test scene to
+  ensure the vertical slice satisfies Week 1 gameplay and stability requirements.
