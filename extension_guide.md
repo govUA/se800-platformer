@@ -172,3 +172,64 @@ Assign via `enemy.SetBehaviour(new JumpAttackBehaviour(playerTransform))` at run
     * `SetGravityMultiplier(float mult)`: Modifies downward pull.
 * **Stats (`Context.Stats`)**:
     * ScriptableObject values for run speeds, jump apex parameters, and timings.
+
+---
+
+## 4. Connecting Custom Mechanics to the Animation System
+
+All actor animations are driven through `ActorAnimationBridge` subclasses. Never call `animator.SetTrigger()`
+or `animator.SetFloat()` directly inside your state or ability classes.
+
+### Triggering Custom Animations from Player Abilities
+
+To drive visuals from a custom ability or state (e.g., `DashAbility` or `DoubleJumpAbility`):
+
+1. **Listen to State Changes**: The `PlayerAnimationBridge` automatically listens to
+   `PlayerController.OnStateChanged`. If your custom state represents a sustained animation mode (such as
+   sliding, dashing, or gliding), check for your state type in `PlayerAnimationBridge.HandleStateChanged()` or subscribe
+   to `playerController.OnStateChanged` inside a companion component:
+   ```csharp
+   private void HandleStateChanged(IState newState)
+   {
+       animator.SetBool(AnimationHashes.IsDashing, newState is DashState);
+   }
+   ```
+2. **One-Shot Triggers**: Use the pre-hashed IDs in `AnimationHashes` (such as `AnimationHashes.JumpTrigger` or
+   `AnimationHashes.Action`):
+   ```csharp
+   PlayerAnimationBridge bridge = GetComponentInChildren<PlayerAnimationBridge>();
+   bridge.NotifyJumpExecuted();
+   ```
+
+### Binding Custom Enemy Behaviours to Animations
+
+When extending `IEnemyBehaviour`, use `EnemyAnimationBridge` to notify the Animator of behavioral changes upon entry or
+state transitions:
+
+```csharp
+public class ChaseBehaviour : IEnemyBehaviour
+{
+    private EnemyAnimationBridge _animBridge;
+    public void Enter(BaseEnemy enemy)
+    {
+        _animBridge = enemy.GetComponentInChildren<EnemyAnimationBridge>();
+        _animBridge?.SetChasing(true);
+    }
+    public void Exit(BaseEnemy enemy)
+    {
+        _animBridge?.SetChasing(false);
+        enemy.Motor.SetVelocityX(0f);
+    }
+}
+```
+
+### Hooking Animation Events Without Combat Coupling
+
+To trigger gameplay-acknowledged timestamps (e.g., swing frame, cast frame, interaction point) without referencing
+health, damage, or weapon components:
+
+1. Add an `AnimationEvent` to the animation clip at the desired frame.
+2. Set the function name to `OnInteractionEvent`.
+3. Provide a string parameter (e.g., `"PrimaryAttack"`, `"LeverPull"`, `"Cast"`).
+4. Ensure the GameObject with the `Animator` has `AnimationEventReceiver` attached. It will log and dispatch
+   the event at the exact frame.

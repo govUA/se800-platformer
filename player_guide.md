@@ -13,6 +13,9 @@ behaviours.
 | **Jump**                 | `Space`                                   | Jump from the ground, leap off walls, or mid-air jump.        |
 | **Variable Jump Height** | Hold vs. Tap `Space`                      | Tap for a short hop or hold through the apex for full height. |
 | **Dash**                 | `Left Shift`                              | Propel horizontally in your current facing direction.         |
+| **Test Hurt Reaction**   | `H`                                       | Diagnostic trigger: plays character Hurt reaction clip.       |
+| **Test Death Reaction**  | `K`                                       | Diagnostic trigger: plays character Death animation.          |
+| **Test Interaction/Use** | `J`                                       | Diagnostic trigger: executes action clip & logs frame event.  |
 
 ---
 
