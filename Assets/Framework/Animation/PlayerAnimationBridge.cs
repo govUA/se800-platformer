@@ -2,6 +2,7 @@
 using Framework.Player;
 using Framework.Player.States;
 using Framework.Core.StateMachine;
+using Extensions;
 
 namespace Framework.Animation
 {
@@ -41,7 +42,32 @@ namespace Framework.Animation
         private void HandleStateChanged(IState newState)
         {
             if (animator == null) return;
+
             animator.SetBool(AnimationHashes.IsWallSliding, newState is WallSlideState);
+            animator.SetBool(AnimationHashes.IsDashing, newState is DashState);
+        }
+
+        // Public API hook for DoubleJumpAbility or Grounded Jump triggers
+        public void NotifyJumpExecuted()
+        {
+            if (animator != null) animator.SetTrigger(AnimationHashes.JumpTrigger);
+        }
+
+        public override void TriggerHurt()
+        {
+            base.TriggerHurt();
+            // Reset dash flag immediately to avoid visual stuck loops if hurt mid-dash
+            if (animator != null) animator.SetBool(AnimationHashes.IsDashing, false);
+        }
+
+        public override void TriggerDeath()
+        {
+            base.TriggerDeath();
+            if (animator != null)
+            {
+                animator.SetBool(AnimationHashes.IsDashing, false);
+                animator.SetBool(AnimationHashes.IsWallSliding, false);
+            }
         }
     }
 }
