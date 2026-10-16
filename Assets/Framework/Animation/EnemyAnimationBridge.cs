@@ -8,6 +8,8 @@ namespace Framework.Animation
         [Header("Enemy Reference")] [SerializeField]
         private BaseEnemy enemy;
 
+        private bool _isChasing;
+
         protected override void Awake()
         {
             base.Awake();
@@ -21,6 +23,12 @@ namespace Framework.Animation
             float horizontalSpeed = Mathf.Abs(motor.Velocity.x);
             animator.SetFloat(AnimationHashes.Speed, horizontalSpeed);
             animator.SetBool(AnimationHashes.IsGrounded, sensors.IsGrounded);
+            animator.SetBool(AnimationHashes.IsChasing, _isChasing);
+        }
+
+        public void SetChasing(bool chasing)
+        {
+            _isChasing = chasing;
         }
     }
 }
