@@ -2,6 +2,7 @@
 {
     public interface IEnemyBehaviour
     {
+        int AnimationBoolHash => 0;
         void Enter(BaseEnemy enemy);
         void Tick(BaseEnemy enemy);
         void FixedTick(BaseEnemy enemy);

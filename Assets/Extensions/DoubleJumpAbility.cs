@@ -38,13 +38,15 @@ namespace Extensions
 
         private void HandleStateChanged(Framework.Core.StateMachine.IState newState)
         {
-            if (newState == _controller.AirborneState) _airborneTimer = 0f;
+            if (newState == _controller.AirborneState)
+            {
+                _airborneTimer = 0f;
+            }
         }
 
         private void Update()
         {
-            bool isAirborne = _controller.CurrentState == _controller.AirborneState;
-            if (!isAirborne) return;
+            if (_controller.CurrentState != _controller.AirborneState) return;
 
             _airborneTimer += Time.deltaTime;
 
@@ -53,9 +55,10 @@ namespace Extensions
 
             if (coyoteWindowPassed && !touchingWall && _remainingJumps > 0 && _controller.Context.Input.JumpPressed)
             {
-                _remainingJumps--;
-                float velocity = _controller.Context.Stats.InitialJumpVelocity * extraJumpVelocityMultiplier;
-                _controller.Context.Motor.SetVelocityY(velocity);
+                if (_controller.TryAirborneJump(extraJumpVelocityMultiplier))
+                {
+                    _remainingJumps--;
+                }
             }
         }
     }

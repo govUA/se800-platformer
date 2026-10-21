@@ -14,10 +14,6 @@ namespace Framework.Animation
         public static readonly int Hurt = Animator.StringToHash("Hurt");
         public static readonly int Death = Animator.StringToHash("Death");
         public static readonly int Action = Animator.StringToHash("Action");
-
-        // Extension Ability Hooks
-        public static readonly int IsDashing = Animator.StringToHash("IsDashing");
         public static readonly int JumpTrigger = Animator.StringToHash("Jump");
-        public static readonly int IsChasing = Animator.StringToHash("IsChasing");
     }
 }

@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using Framework.Player;
-using Framework.Player.States;
 using Framework.Core.StateMachine;
-using Extensions;
 
 namespace Framework.Animation
 {
@@ -10,6 +8,8 @@ namespace Framework.Animation
     {
         [Header("Player Reference")] [SerializeField]
         private PlayerController playerController;
+
+        private int _currentActiveStateHash;
 
         protected override void Awake()
         {
@@ -43,11 +43,21 @@ namespace Framework.Animation
         {
             if (animator == null) return;
 
-            animator.SetBool(AnimationHashes.IsWallSliding, newState is WallSlideState);
-            animator.SetBool(AnimationHashes.IsDashing, newState is DashState);
+            // Clear previously active state animation boolean
+            if (_currentActiveStateHash != 0)
+            {
+                animator.SetBool(_currentActiveStateHash, false);
+                _currentActiveStateHash = 0;
+            }
+
+            // Set new state animation boolean if registered by the state
+            if (newState is BasePlayerState baseState && baseState.AnimationBoolHash != 0)
+            {
+                _currentActiveStateHash = baseState.AnimationBoolHash;
+                animator.SetBool(_currentActiveStateHash, true);
+            }
         }
 
-        // Public API hook for DoubleJumpAbility or Grounded Jump triggers
         public void NotifyJumpExecuted()
         {
             if (animator != null) animator.SetTrigger(AnimationHashes.JumpTrigger);
@@ -56,17 +66,21 @@ namespace Framework.Animation
         public override void TriggerHurt()
         {
             base.TriggerHurt();
-            // Reset dash flag immediately to avoid visual stuck loops if hurt mid-dash
-            if (animator != null) animator.SetBool(AnimationHashes.IsDashing, false);
+            ClearActiveStateHash();
         }
 
         public override void TriggerDeath()
         {
             base.TriggerDeath();
-            if (animator != null)
+            ClearActiveStateHash();
+        }
+
+        private void ClearActiveStateHash()
+        {
+            if (animator != null && _currentActiveStateHash != 0)
             {
-                animator.SetBool(AnimationHashes.IsDashing, false);
-                animator.SetBool(AnimationHashes.IsWallSliding, false);
+                animator.SetBool(_currentActiveStateHash, false);
+                _currentActiveStateHash = 0;
             }
         }
     }

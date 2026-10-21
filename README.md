@@ -52,15 +52,21 @@ Assets/
 │   │   ├── Sensors/            # Ground, ledge, and wall detection
 │   │   └── StateMachine/       # Base finite state machine interfaces
 │   ├── Data/                   # Movement tuning ScriptableObjects
-│   ├── Enemy/                  # Base enemy controller & stock behaviors
+│   ├── Enemy/                  # Base enemy controller, provider base & behaviors
+│   │   ├── BaseEnemy.cs
+│   │   ├── EnemyBehaviourProvider.cs
+│   │   ├── IEnemyBehaviour.cs
+│   │   └── Behaviours/
 │   └── Player/                 # Core player controller & basic states
-├── Extensions/                 # Custom gameplay features & modular abilities
-├── DashAbility.cs          # Horizontal impulse dash
-├── DashState.cs            # Dash state implementation
-├── DoubleJumpAbility.cs    # Air jump mechanic
-├── ChaseBehaviour.cs       # Proximity-based enemy aggression
-├── JumpToPlayerBehaviour.cs# Predictive enemy leap attack
-└── EnemyBehaviourInitializer.cs # Runtime behaviour configuration
+└── Extensions/                 # Custom gameplay features & modular abilities
+    ├── DashAbility.cs          # Horizontal impulse dash
+    ├── DashState.cs            # Dash state implementation
+    ├── DoubleJumpAbility.cs    # Air jump mechanic
+    ├── ChaseBehaviour.cs       # Proximity-based enemy aggression
+    ├── JumpToPlayerBehaviour.cs# Predictive enemy leap attack
+    └── Providers/              # Modular component providers
+        ├── ChaseBehaviourProvider.cs
+        └── JumpToPlayerBehaviourProvider.cs
 ```
 
 ---

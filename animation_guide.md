@@ -20,7 +20,7 @@ Animation & Feedback Release)**.
 
 Any Animator Controller assigned to a Player or Enemy prefab must configure the following standardized parameters:
 
-### Shared Locomotion & Reaction Parameters
+### Core Locomotion & Reaction Parameters (`AnimationHashes.cs`)
 
 | Parameter Name     | Type    | Purpose / Trigger Condition                                          |
 |:-------------------|:--------|:---------------------------------------------------------------------|
@@ -31,14 +31,14 @@ Any Animator Controller assigned to a Player or Enemy prefab must configure the 
 | `Hurt`             | Trigger | Triggered to play hit-stun / damage-reaction clip.                   |
 | `Death`            | Trigger | Triggered upon actor defeat. Resets continuous state booleans.       |
 | `Action`           | Trigger | Generic interaction/attack animation trigger.                        |
+| `Jump`             | Trigger | Dispatched on ground jump or `DoubleJumpAbility` execution.          |
 
-### Ability & AI Extension Parameters
+### Extension Ability Parameters (Defined within Extensions)
 
-| Parameter Name | Type    | Purpose / Trigger Condition                                 |
-|:---------------|:--------|:------------------------------------------------------------|
-| `IsDashing`    | Bool    | Active during `DashState`; resets upon completion or Hurt.  |
-| `Jump`         | Trigger | Dispatched on ground jump or `DoubleJumpAbility` execution. |
-| `IsChasing`    | Bool    | Active when enemy enters detection radius of target.        |
+| Parameter Name | Defined In                  | Purpose / Trigger Condition                                       |
+|:---------------|:----------------------------|:------------------------------------------------------------------|
+| `IsDashing`    | `Extensions.DashState`      | Active during `DashState`; bound via `AnimationBoolHash`.         |
+| `IsChasing`    | `Extensions.ChaseBehaviour` | Active when target is in detection range via `AnimationBoolHash`. |
 
 ---
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Framework.Animation;
 
 namespace Framework.Player.States
 {
@@ -14,6 +15,17 @@ namespace Framework.Player.States
         public void TriggerWallJump(float lockoutDuration)
         {
             _wallJumpLockoutTimer = lockoutDuration;
+        }
+
+        public void ExecuteAirJump(float velocityMultiplier = 1f)
+        {
+            Context.Motor.SetGravityMultiplier(1f);
+            float velocity = Context.Stats.InitialJumpVelocity * velocityMultiplier;
+            Context.Motor.SetVelocityY(velocity);
+
+            // Notify bridge to fire jump trigger animation if available
+            var bridge = Context.Controller.GetComponentInChildren<PlayerAnimationBridge>();
+            bridge?.NotifyJumpExecuted();
         }
 
         public override void Enter()

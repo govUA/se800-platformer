@@ -1,10 +1,19 @@
 ﻿using UnityEngine;
+using Framework.Animation;
+using Framework.Core.StateMachine;
 
 namespace Framework.Player.States
 {
     public class WallSlideState : BasePlayerState
     {
         private int _lastWallDir;
+
+        public override int AnimationBoolHash => AnimationHashes.IsWallSliding;
+
+        public override bool CanTransitionTo(IState nextState)
+        {
+            return nextState == Context.Controller.GroundedState || nextState == Context.Controller.AirborneState;
+        }
 
         public WallSlideState(PlayerContext context) : base(context)
         {

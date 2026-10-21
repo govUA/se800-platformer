@@ -271,10 +271,10 @@ GameObject:
   - component: {fileID: 550749256}
   - component: {fileID: 550749255}
   - component: {fileID: 550749254}
-  - component: {fileID: 700000003}
   - component: {fileID: 700000006}
   - component: {fileID: 700000005}
   - component: {fileID: 700000004}
+  - component: {fileID: 700000008}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -651,26 +651,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   extraJumps: 1
   extraJumpVelocityMultiplier: 0.9
---- !u!114 &700000003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 550749253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 870aa82ca8b54df78524745f86e84f00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  behaviourType: 1
-  player: {fileID: 1313598043}
-  chaseDetectionRange: 6
-  chaseSpeedMultiplier: 1.6
-  jumpTriggerRange: 4
-  jumpCooldown: 1.5
-  jumpForce: 6
-  jumpHeight: 9
 --- !u!114 &700000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -721,6 +701,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &700000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 550749253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d18160ca1540e19d97faf6d9d7873b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Extensions.Providers.ChaseBehaviourProvider
+  player: {fileID: 1313598043}
+  chaseDetectionRange: 6
+  chaseSpeedMultiplier: 1.6
 --- !u!1 &821360102
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,11 +5,15 @@ namespace Extensions
 {
     public class ChaseBehaviour : IEnemyBehaviour
     {
+        private static readonly int ChasingHash = Animator.StringToHash("IsChasing");
+
         private readonly Transform _player;
         private readonly float _detectionRange;
         private readonly float _chaseSpeedMultiplier;
 
         private bool _isChasing;
+
+        public int AnimationBoolHash => _isChasing ? ChasingHash : 0;
 
         public ChaseBehaviour(Transform player, float detectionRange, float chaseSpeedMultiplier = 1.6f)
         {
@@ -25,7 +29,14 @@ namespace Extensions
         public void Tick(BaseEnemy enemy)
         {
             float distance = _player != null ? _player.position.x - enemy.transform.position.x : 0f;
+            bool wasChasing = _isChasing;
             _isChasing = _player != null && Mathf.Abs(distance) <= _detectionRange;
+
+            // If chase state toggled, re-notify the enemy to update the bridge
+            if (wasChasing != _isChasing)
+            {
+                enemy.SetBehaviour(this);
+            }
 
             int desiredDirection = _isChasing ? (int)Mathf.Sign(distance) : enemy.FacingDirection;
 
