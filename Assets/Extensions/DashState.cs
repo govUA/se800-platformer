@@ -1,6 +1,7 @@
 using UnityEngine;
 using Framework.Core.StateMachine;
 using Framework.Player;
+using Framework.Animation;
 
 namespace Extensions
 {
@@ -11,6 +12,8 @@ namespace Extensions
 
         private float _direction = 1f;
         private float _timer;
+
+        public override int AnimationBoolHash => AnimationHashes.IsDashing;
 
         public DashState(PlayerContext context, float dashSpeed, float dashDuration) : base(context)
         {

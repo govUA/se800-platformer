@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
+using Framework.Animation;
 
 namespace Framework.Player.States
 {
     public class WallSlideState : BasePlayerState
     {
         private int _lastWallDir;
+
+        public override int AnimationBoolHash => AnimationHashes.IsWallSliding;
 
         public WallSlideState(PlayerContext context) : base(context)
         {
