@@ -5,17 +5,27 @@ namespace Framework.Animation
 {
     public class EnemyAnimationBridge : ActorAnimationBridge
     {
-        private static readonly int ChasingHash = Animator.StringToHash("IsChasing");
-
         [Header("Enemy Reference")] [SerializeField]
         private BaseEnemy enemy;
 
-        private bool _isChasing;
+        private int _currentBehaviourHash;
 
         protected override void Awake()
         {
             base.Awake();
             if (enemy == null) enemy = GetComponentInParent<BaseEnemy>();
+        }
+
+        private void OnEnable()
+        {
+            if (enemy != null)
+                enemy.OnBehaviourChanged += HandleBehaviourChanged;
+        }
+
+        private void OnDisable()
+        {
+            if (enemy != null)
+                enemy.OnBehaviourChanged -= HandleBehaviourChanged;
         }
 
         private void Update()
@@ -25,12 +35,25 @@ namespace Framework.Animation
             float horizontalSpeed = Mathf.Abs(motor.Velocity.x);
             animator.SetFloat(AnimationHashes.Speed, horizontalSpeed);
             animator.SetBool(AnimationHashes.IsGrounded, sensors.IsGrounded);
-            animator.SetBool(ChasingHash, _isChasing);
         }
 
-        public void SetChasing(bool chasing)
+        private void HandleBehaviourChanged(IEnemyBehaviour newBehaviour)
         {
-            _isChasing = chasing;
+            if (animator == null) return;
+
+            // Clear previous behavior animator parameter
+            if (_currentBehaviourHash != 0)
+            {
+                animator.SetBool(_currentBehaviourHash, false);
+                _currentBehaviourHash = 0;
+            }
+
+            // Set new behavior parameter if declared
+            if (newBehaviour != null && newBehaviour.AnimationBoolHash != 0)
+            {
+                _currentBehaviourHash = newBehaviour.AnimationBoolHash;
+                animator.SetBool(_currentBehaviourHash, true);
+            }
         }
     }
 }

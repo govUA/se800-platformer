@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Framework.Core.Motor;
 using Framework.Core.Sensors;
 
@@ -17,7 +18,10 @@ namespace Framework.Enemy
         public ActorMotor2D Motor { get; private set; }
         public EnvironmentDetector2D Sensors { get; private set; }
         public float MoveSpeed => moveSpeed;
-        public int FacingDirection { get; private set; } = 1; // 1 = Right, -1 = Left
+        public int FacingDirection { get; private set; } = 1;
+
+        public IEnemyBehaviour CurrentBehaviour => _currentBehaviour;
+        public event Action<IEnemyBehaviour> OnBehaviourChanged;
 
         private IEnemyBehaviour _currentBehaviour;
 
@@ -50,6 +54,7 @@ namespace Framework.Enemy
             _currentBehaviour?.Exit(this);
             _currentBehaviour = newBehaviour;
             _currentBehaviour?.Enter(this);
+            OnBehaviourChanged?.Invoke(_currentBehaviour);
         }
 
         public void FlipDirection()
