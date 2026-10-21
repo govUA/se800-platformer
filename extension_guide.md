@@ -85,10 +85,11 @@ namespace Extensions
 
         private void Update()
         {
-            if (_controller.CurrentState == _controller.AirborneState && _controller.Context.Input.JumpPressed &&
+            if (_controller.CurrentState == _controller.AirborneState && 
+                _controller.Context.Input.JumpPressed &&
                 _controller.Context.Motor.Velocity.y < 0f)
             {
-                _controller.ChangeState(GlideState);
+                _controller.TryChangeState(GlideState);
             }
         }
     }
@@ -99,7 +100,7 @@ namespace Extensions
 
 ## 2. How to Add a New Enemy Behaviour
 
-Enemy logic is decoupled through `IEnemyBehaviour`.
+Enemy logic is decoupled through `IEnemyBehaviour` and initialized via `EnemyBehaviourProvider`.
 
 ### Step 1: Implement `IEnemyBehaviour`
 
@@ -132,10 +133,9 @@ namespace Extensions
             if (_cooldownTimer <= 0f && enemy.Sensors.IsGrounded)
             {
                 _cooldownTimer = 2f;
-                if ((_playerTransform.position.x > enemy.transform.position.x && enemy.FacingDirection < 0) \vert{
-                }\vert{
-                }
-                (_playerTransform.position.x < enemy.transform.position.x && enemy.FacingDirection > 0)) {
+                if ((_playerTransform.position.x > enemy.transform.position.x && enemy.FacingDirection < 0) ||
+                    (_playerTransform.position.x < enemy.transform.position.x && enemy.FacingDirection > 0))
+                {
                     enemy.FlipDirection();
                 }
                 enemy.Motor.ApplyImpulse(new Vector2(enemy.FacingDirection * 6f, 10f));
@@ -153,9 +153,29 @@ namespace Extensions
 }
 ```
 
-### Step 2: Assign it to an Enemy
+### Step 2: Create a Behaviour Provider Component
 
-Assign via `enemy.SetBehaviour(new JumpAttackBehaviour(playerTransform))` at runtime or on start.
+Create a provider component inheriting from `EnemyBehaviourProvider` so it can be attached to prefabs:
+
+```csharp
+using UnityEngine;
+using Framework.Enemy;
+
+namespace Extensions.Providers
+{
+    public class JumpAttackProvider : EnemyBehaviourProvider
+    {
+        [SerializeField] private Transform targetPlayer;
+
+        public override IEnemyBehaviour CreateBehaviour(BaseEnemy enemy)
+        {
+            return new JumpAttackBehaviour(targetPlayer);
+        }
+    }
+}
+```
+
+Attach this component directly to the `Enemy` GameObject alongside `BaseEnemy`.
 
 ---
 
@@ -172,64 +192,43 @@ Assign via `enemy.SetBehaviour(new JumpAttackBehaviour(playerTransform))` at run
     * `SetGravityMultiplier(float mult)`: Modifies downward pull.
 * **Stats (`Context.Stats`)**:
     * ScriptableObject values for run speeds, jump apex parameters, and timings.
+* **Controller State Transitions (`_controller`)**:
+    * `TryChangeState(IState newState)`: Validates transition authorization before switching states.
+    * `TryAirborneJump(float velocityMultiplier)`: Triggers aerial jump impulses and jump animations cleanly while
+      airborne.
 
 ---
 
 ## 4. Connecting Custom Mechanics to the Animation System
 
-All actor animations are driven through `ActorAnimationBridge` subclasses. Never call `animator.SetTrigger()`
-or `animator.SetFloat()` directly inside your state or ability classes.
+All actor animations are driven through polymorphic hash contracts (`AnimationBoolHash`). Do not edit core animation
+bridge files.
 
-### Triggering Custom Animations from Player Abilities
+### Sustained Animation States (Booleans)
 
-To drive visuals from a custom ability or state (e.g., `DashAbility` or `DoubleJumpAbility`):
+If your custom `BasePlayerState` or `IEnemyBehaviour` represents a sustained animation mode (such as sliding, dashing,
+or chasing):
 
-1. **Listen to State Changes**: The `PlayerAnimationBridge` automatically listens to
-   `PlayerController.OnStateChanged`. If your custom state represents a sustained animation mode (such as
-   sliding, dashing, or gliding), check for your state type in `PlayerAnimationBridge.HandleStateChanged()` or subscribe
-   to `playerController.OnStateChanged` inside a companion component:
+1. Define a private static hashed ID inside your state:
    ```csharp
-   private void HandleStateChanged(IState newState)
-   {
-       animator.SetBool(AnimationHashes.IsDashing, newState is DashState);
-   }
+   private static readonly int DashHash = Animator.StringToHash("IsDashing");
    ```
-2. **One-Shot Triggers**: Use the pre-hashed IDs in `AnimationHashes` (such as `AnimationHashes.JumpTrigger` or
-   `AnimationHashes.Action`):
+2. Override `AnimationBoolHash`:
    ```csharp
-   PlayerAnimationBridge bridge = GetComponentInChildren<PlayerAnimationBridge>();
-   bridge.NotifyJumpExecuted();
+   public override int AnimationBoolHash => DashHash;
    ```
 
-### Binding Custom Enemy Behaviours to Animations
+The animation bridge automatically listens to state transitions, clears previous flags, and sets the new boolean.
 
-When extending `IEnemyBehaviour`, use `EnemyAnimationBridge` to notify the Animator of behavioral changes upon entry or
-state transitions:
+### One-Shot Triggers
+
+For aerial jumps or one-shot animations, trigger them through the controller or bridge API:
 
 ```csharp
-public class ChaseBehaviour : IEnemyBehaviour
-{
-    private EnemyAnimationBridge _animBridge;
-    public void Enter(BaseEnemy enemy)
-    {
-        _animBridge = enemy.GetComponentInChildren<EnemyAnimationBridge>();
-        _animBridge?.SetChasing(true);
-    }
-    public void Exit(BaseEnemy enemy)
-    {
-        _animBridge?.SetChasing(false);
-        enemy.Motor.SetVelocityX(0f);
-    }
-}
+// Multi-jump triggers via PlayerController:
+controller.TryAirborneJump(multiplier);
+
+// Or direct trigger dispatch:
+PlayerAnimationBridge bridge = GetComponentInChildren<PlayerAnimationBridge>();
+bridge.NotifyJumpExecuted();
 ```
-
-### Hooking Animation Events Without Combat Coupling
-
-To trigger gameplay-acknowledged timestamps (e.g., swing frame, cast frame, interaction point) without referencing
-health, damage, or weapon components:
-
-1. Add an `AnimationEvent` to the animation clip at the desired frame.
-2. Set the function name to `OnInteractionEvent`.
-3. Provide a string parameter (e.g., `"PrimaryAttack"`, `"LeverPull"`, `"Cast"`).
-4. Ensure the GameObject with the `Animator` has `AnimationEventReceiver` attached. It will log and dispatch
-   the event at the exact frame.
