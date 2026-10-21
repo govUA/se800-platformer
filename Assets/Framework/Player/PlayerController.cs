@@ -77,5 +77,16 @@ namespace Framework.Player
         {
             _jumpBufferTimer = 0f;
         }
+
+        public bool TryAirborneJump(float velocityMultiplier = 1f)
+        {
+            if (CurrentState == AirborneState)
+            {
+                AirborneState.ExecuteAirJump(velocityMultiplier);
+                return true;
+            }
+
+            return false;
+        }
     }
 }
