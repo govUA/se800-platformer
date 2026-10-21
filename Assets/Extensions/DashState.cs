@@ -1,19 +1,20 @@
 using UnityEngine;
 using Framework.Core.StateMachine;
 using Framework.Player;
-using Framework.Animation;
 
 namespace Extensions
 {
     public class DashState : BasePlayerState
     {
+        private static readonly int DashHash = Animator.StringToHash("IsDashing");
+
         private readonly float _dashSpeed;
         private readonly float _dashDuration;
 
         private float _direction = 1f;
         private float _timer;
 
-        public override int AnimationBoolHash => AnimationHashes.IsDashing;
+        public override int AnimationBoolHash => DashHash;
 
         public DashState(PlayerContext context, float dashSpeed, float dashDuration) : base(context)
         {

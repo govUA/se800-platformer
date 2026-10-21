@@ -5,6 +5,8 @@ namespace Framework.Animation
 {
     public class EnemyAnimationBridge : ActorAnimationBridge
     {
+        private static readonly int ChasingHash = Animator.StringToHash("IsChasing");
+
         [Header("Enemy Reference")] [SerializeField]
         private BaseEnemy enemy;
 
@@ -23,7 +25,7 @@ namespace Framework.Animation
             float horizontalSpeed = Mathf.Abs(motor.Velocity.x);
             animator.SetFloat(AnimationHashes.Speed, horizontalSpeed);
             animator.SetBool(AnimationHashes.IsGrounded, sensors.IsGrounded);
-            animator.SetBool(AnimationHashes.IsChasing, _isChasing);
+            animator.SetBool(ChasingHash, _isChasing);
         }
 
         public void SetChasing(bool chasing)
