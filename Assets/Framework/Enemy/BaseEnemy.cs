@@ -35,7 +35,15 @@ namespace Framework.Enemy
         {
             if (_currentBehaviour == null)
             {
-                SetBehaviour(new PatrolBehaviour());
+                var provider = GetComponent<EnemyBehaviourProvider>();
+                if (provider != null)
+                {
+                    SetBehaviour(provider.CreateBehaviour(this));
+                }
+                else
+                {
+                    SetBehaviour(new PatrolBehaviour());
+                }
             }
         }
 
