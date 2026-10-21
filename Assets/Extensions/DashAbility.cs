@@ -34,15 +34,16 @@ namespace Extensions
             if (Mathf.Abs(horizontal) > 0.01f) _lastFacing = Mathf.Sign(horizontal);
 
             bool dashPressed = Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame;
-            bool canDash = _cooldownTimer <= 0f &&
-                           _controller.CurrentState != _dashState &&
-                           _controller.CurrentState != _controller.WallSlideState;
+            bool canAttemptDash = _cooldownTimer <= 0f && _controller.CurrentState != _dashState;
 
-            if (dashPressed && canDash)
+            if (dashPressed && canAttemptDash)
             {
                 _dashState.SetDirection(_lastFacing);
-                _cooldownTimer = dashCooldown;
-                _controller.ChangeState(_dashState);
+
+                if (_controller.TryChangeState(_dashState))
+                {
+                    _cooldownTimer = dashCooldown;
+                }
             }
         }
     }

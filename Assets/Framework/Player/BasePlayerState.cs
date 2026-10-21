@@ -9,6 +9,8 @@ namespace Framework.Player
         // Returns an Animator parameter hash if this state maps to an active boolean flag; returns 0 if none.
         public virtual int AnimationBoolHash => 0;
 
+        public virtual bool CanTransitionTo(IState nextState) => true;
+
         protected BasePlayerState(PlayerContext context)
         {
             Context = context;

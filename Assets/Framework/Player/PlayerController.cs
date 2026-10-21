@@ -88,5 +88,23 @@ namespace Framework.Player
 
             return false;
         }
+
+        public bool CanTransitionTo(IState newState)
+        {
+            if (newState == null || newState == CurrentState) return false;
+            if (CurrentState is BasePlayerState baseState)
+            {
+                return baseState.CanTransitionTo(newState);
+            }
+
+            return true;
+        }
+
+        public bool TryChangeState(IState newState)
+        {
+            if (!CanTransitionTo(newState)) return false;
+            ChangeState(newState);
+            return true;
+        }
     }
 }
