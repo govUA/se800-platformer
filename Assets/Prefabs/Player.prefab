@@ -536,6 +536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Framework.Player.PlayerController
   stats: {fileID: 11400000, guid: 28bdb6e674ca4af499782063eb587e4d, type: 2}
+  visualsContainer: {fileID: 1244684055512161551}
 --- !u!114 &2402992538961079554
 MonoBehaviour:
   m_ObjectHideFlags: 0
