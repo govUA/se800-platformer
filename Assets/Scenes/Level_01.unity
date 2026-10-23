@@ -184,6 +184,54 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 068b99dcc8001a546a41dcee1034f7c6, type: 3}
+--- !u!1 &178427269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 178427271}
+  - component: {fileID: 178427270}
+  m_Layer: 0
+  m_Name: '[DEBUG_AnimationTester]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &178427270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178427269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 506df9cd83bc4796bd00946e3189f360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Framework.Animation.AnimationTestRig
+  targetBridge: {fileID: 2000000000008}
+  hurtKey: 22
+  deathKey: 25
+  actionKey: 24
+--- !u!4 &178427271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178427269}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.503, y: -0.3018, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &222002999
 GameObject:
   m_ObjectHideFlags: 0
@@ -2796,6 +2844,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a444b72500087c4a828363bc9a0f86e, type: 3}
+--- !u!114 &2000000000008 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3463899962345129881, guid: 2a444b72500087c4a828363bc9a0f86e, type: 3}
+  m_PrefabInstance: {fileID: 2000000000007}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 223be86448424d80b45712dd1b8cf888, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Framework.Animation.PlayerAnimationBridge
 --- !u!1001 &2000000000029
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2856,3 +2915,4 @@ SceneRoots:
   - {fileID: 1967750832}
   - {fileID: 2139003174}
   - {fileID: 659014345}
+  - {fileID: 178427271}
