@@ -14,6 +14,11 @@ namespace Framework.Player
     {
         [SerializeField] private MovementStatsSO stats;
 
+        [Header("Visual Rig Orientation")] [SerializeField]
+        private Transform visualsContainer;
+
+        public int FacingDirection { get; private set; } = 1; // 1 = Right, -1 = Left
+
         public IState CurrentState { get; private set; }
 
         public GroundedState GroundedState { get; private set; }
@@ -51,6 +56,32 @@ namespace Framework.Player
         {
             if (_jumpBufferTimer > 0f) _jumpBufferTimer -= Time.deltaTime;
             CurrentState?.Tick();
+
+            UpdateFacingDirection();
+        }
+
+        private void UpdateFacingDirection()
+        {
+            float horizontal = Context.Input.HorizontalInput;
+
+            if (Mathf.Abs(horizontal) > 0.01f)
+            {
+                int newFacing = horizontal > 0f ? 1 : -1;
+                if (newFacing != FacingDirection)
+                {
+                    FacingDirection = newFacing;
+                    ApplyVisualFlip();
+                }
+            }
+        }
+
+        private void ApplyVisualFlip()
+        {
+            if (visualsContainer == null) return;
+
+            Vector3 scale = visualsContainer.localScale;
+            scale.x = Mathf.Abs(scale.x) * FacingDirection;
+            visualsContainer.localScale = scale;
         }
 
         private void FixedUpdate()
