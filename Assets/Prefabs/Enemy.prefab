@@ -56,7 +56,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031449087670526193}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -152,7 +152,7 @@ Transform:
   m_GameObject: {fileID: 2170598898560285826}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.52, y: -5.67, z: 1}
+  m_LocalPosition: {x: -0.52, y: -5.67, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -425,8 +425,8 @@ Transform:
   m_GameObject: {fileID: 5602993055287432591}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.75, y: 0, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
+  m_LocalPosition: {x: -0.75, y: -0.1, z: 0}
+  m_LocalScale: {x: -0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7997728419568412226}
@@ -454,7 +454,7 @@ GameObject:
   - component: {fileID: 5068385656612015355}
   m_Layer: 6
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -716,6 +716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d770e2d57e84bf0a034f8f7a541a1e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Extensions.EnemyKnockback
+  deathAnimationDuration: 0.75
 --- !u!114 &5068385656612015355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,7 +730,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Extensions.EnemyAttack
   attackRange: 1.3
-  attackWindup: 0.35
   attackCooldown: 1.2
   knockbackToPlayer: {x: 10, y: 6}
   playerLayer:

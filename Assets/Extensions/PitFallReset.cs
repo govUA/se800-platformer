@@ -14,10 +14,23 @@ namespace Extensions
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            var deathReceiver = other.GetComponentInParent<PlayerDeathReceiver>();
-            if (deathReceiver != null && !deathReceiver.IsDead)
+            var playerDeath = other.GetComponentInParent<PlayerDeathReceiver>();
+            if (playerDeath != null && !playerDeath.IsDead)
             {
-                deathReceiver.KillAndKnockback(fallImpulse);
+                playerDeath.KillAndKnockback(fallImpulse);
+                return;
+            }
+
+            var enemyKnockback = other.GetComponentInParent<EnemyKnockback>();
+            if (enemyKnockback != null)
+            {
+                enemyKnockback.InstantKill();
+                return;
+            }
+
+            if (other.CompareTag("Enemy"))
+            {
+                Destroy(other.gameObject);
             }
         }
     }

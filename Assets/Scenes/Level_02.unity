@@ -896,7 +896,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 398d3744ba527479095f906aad34f0e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Extensions.PitFallReset
-  gameOverPanel: {fileID: 1665102334}
+  fallImpulse: {x: 0, y: 10}
 --- !u!61 &763770361
 BoxCollider2D:
   m_ObjectHideFlags: 0

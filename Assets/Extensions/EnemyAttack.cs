@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using Framework.Enemy;
 
 namespace Extensions
@@ -10,15 +9,17 @@ namespace Extensions
         [Header("Attack Settings")] [SerializeField]
         private float attackRange = 1.3f;
 
-        [SerializeField] private float attackWindup = 0.35f;
-        [SerializeField] private float attackCooldown = 1.2f;
+        [SerializeField] private float attackCooldown = 1.5f;
         [SerializeField] private Vector2 knockbackToPlayer = new Vector2(10f, 6f);
         [SerializeField] private LayerMask playerLayer;
 
         private BaseEnemy _enemy;
+        private Animator _animator;
         private Transform _player;
         private float _cooldownTimer;
         private bool _isAttacking;
+
+        private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
         public bool IsAttacking => _isAttacking;
         public float AttackRange => attackRange;
@@ -26,11 +27,12 @@ namespace Extensions
         private void Awake()
         {
             _enemy = GetComponent<BaseEnemy>();
+            _animator = GetComponent<Animator>();
         }
 
         private void Start()
         {
-            var playerObj = GameObject.FindGameObjectWithTag("Player");
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
             {
                 _player = playerObj.transform;
@@ -39,7 +41,8 @@ namespace Extensions
 
         private void Update()
         {
-            if (_cooldownTimer > 0f) _cooldownTimer -= Time.deltaTime;
+            if (_cooldownTimer > 0f)
+                _cooldownTimer -= Time.deltaTime;
         }
 
         public bool CanAttack()
@@ -51,33 +54,34 @@ namespace Extensions
         public void ExecuteAttack()
         {
             if (_isAttacking) return;
-            StartCoroutine(AttackRoutine());
-        }
-
-        private IEnumerator AttackRoutine()
-        {
             _isAttacking = true;
             _cooldownTimer = attackCooldown;
 
-            // 1. Stop movement during windup
             _enemy.Motor.SetVelocityX(0f);
 
-            // 2. Windup window — player can jump/dash away
-            yield return new WaitForSeconds(attackWindup);
+            if (_animator != null)
+            {
+                _animator.SetTrigger(AttackTrigger);
+            }
+        }
 
-            // 3. Check if player is still in reach
+        public void OnAttackHitPoint()
+        {
             Collider2D playerHit = Physics2D.OverlapCircle(transform.position, attackRange, playerLayer);
             if (playerHit != null)
             {
                 var deathReceiver = playerHit.GetComponentInParent<PlayerDeathReceiver>();
-                if (deathReceiver != null)
+                if (deathReceiver != null && !deathReceiver.IsDead)
                 {
                     float hitDir = Mathf.Sign(playerHit.transform.position.x - transform.position.x);
                     Vector2 impulse = new Vector2(knockbackToPlayer.x * hitDir, knockbackToPlayer.y);
                     deathReceiver.KillAndKnockback(impulse);
                 }
             }
+        }
 
+        public void OnAttackFinished()
+        {
             _isAttacking = false;
         }
 
