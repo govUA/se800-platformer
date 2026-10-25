@@ -329,6 +329,7 @@ GameObject:
   - component: {fileID: 3463899962345129881}
   - component: {fileID: 7845950737555007118}
   - component: {fileID: 774336322827479062}
+  - component: {fileID: 2184719204756480156}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -636,6 +637,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   knockbackForce: {x: 20, y: 5}
+--- !u!114 &2184719204756480156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130103108461670104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a8e963d67b4c89943a7f12a0e7430f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Extensions.PlayerDeathReceiver
+  gameOverPanel: {fileID: 0}
+  gameOverDelay: 1
 --- !u!1 &1222199114158415459
 GameObject:
   m_ObjectHideFlags: 0
