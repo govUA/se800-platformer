@@ -76,5 +76,34 @@ namespace Framework.Core.Motor
         {
             _rb.linearVelocity = Vector2.zero;
         }
+
+        public void MoveOnSlope(float targetSpeed, float rate, Vector2 groundNormal, float baseSurfaceSpeed = 0f)
+        {
+            // Direction parallel to the slope
+            Vector2 slopeTangent = new Vector2(groundNormal.y, -groundNormal.x).normalized;
+
+            float desiredSpeed = targetSpeed + baseSurfaceSpeed;
+
+            // Target velocity along the slope
+            Vector2 targetVelocity = slopeTangent * desiredSpeed;
+
+            // If on flat ground (or nearly flat), run normal horizontal logic
+            if (Mathf.Abs(groundNormal.x) < 0.05f)
+            {
+                MoveHorizontal(targetSpeed, rate, baseSurfaceSpeed);
+                return;
+            }
+
+            // On slopes: smoothly interpolate velocity towards the target slope vector
+            float step = rate * Time.fixedDeltaTime;
+            Vector2 currentVel = _rb.linearVelocity;
+
+            // Adjust velocity towards the slope projection
+            float newX = Mathf.MoveTowards(currentVel.x, targetVelocity.x,
+                step * Mathf.Abs(targetVelocity.x - currentVel.x + 1f));
+            float newY = targetVelocity.y;
+
+            _rb.linearVelocity = new Vector2(newX, newY);
+        }
     }
 }

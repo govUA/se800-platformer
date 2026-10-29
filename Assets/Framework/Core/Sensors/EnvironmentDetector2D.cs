@@ -39,23 +39,27 @@ namespace Framework.Core.Sensors
             if (groundCheckPoint == null) return;
 
             Collider2D hit = Physics2D.OverlapBox(groundCheckPoint.position, groundCheckSize, 0f, groundLayer);
-            bool wasGrounded = IsGrounded;
-            IsGrounded = hit != null;
 
-            if (IsGrounded)
+            float slopeCheckDistance = 0.35f;
+            RaycastHit2D slopeHit =
+                Physics2D.Raycast(groundCheckPoint.position, Vector2.down, slopeCheckDistance, groundLayer);
+
+            bool wasGrounded = IsGrounded;
+
+            // Consider grounded if either the box touches or the slope raycast detects ground within step range
+            IsGrounded = hit != null || (slopeHit.collider != null && slopeHit.fraction > 0f);
+
+            if (slopeHit.collider != null)
             {
-                RaycastHit2D slopeHit = Physics2D.Raycast(groundCheckPoint.position, Vector2.down, 0.5f, groundLayer);
-                if (slopeHit.collider != null)
-                {
-                    GroundNormal = slopeHit.normal;
-                    var platform = slopeHit.collider.GetComponentInParent<MovingPlatform>();
-                    GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
-                }
-                else
-                {
-                    var platform = hit.GetComponentInParent<MovingPlatform>();
-                    GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
-                }
+                GroundNormal = slopeHit.normal;
+                var platform = slopeHit.collider.GetComponentInParent<MovingPlatform>();
+                GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
+            }
+            else if (hit != null)
+            {
+                GroundNormal = Vector2.up;
+                var platform = hit.GetComponentInParent<MovingPlatform>();
+                GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
             }
             else
             {

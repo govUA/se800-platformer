@@ -537,7 +537,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Framework.Core.Sensors.EnvironmentDetector2D
   groundLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 384
   wallLayer:
     serializedVersion: 2
     m_Bits: 256

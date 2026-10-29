@@ -1,6 +1,4 @@
-﻿// FILE: Assets/Framework/Animation/PlayerAnimationBridge.cs
-
-using UnityEngine;
+﻿using UnityEngine;
 using Framework.Player;
 using Framework.Core.StateMachine;
 
@@ -44,7 +42,8 @@ namespace Framework.Animation
 
             // Vertical velocity relative to platform for fall/jump transitions
             float surfaceVelocityY = sensors.IsGrounded ? sensors.GroundVelocity.y : 0f;
-            float relativeVerticalVelocity = motor.Velocity.y - surfaceVelocityY;
+            // When solidly grounded, vertical velocity for animation blending is 0 (neutral)
+            float relativeVerticalVelocity = sensors.IsGrounded ? 0f : (motor.Velocity.y - surfaceVelocityY);
             animator.SetFloat(AnimationHashes.VerticalVelocity, relativeVerticalVelocity);
 
             animator.SetBool(AnimationHashes.IsGrounded, sensors.IsGrounded);
