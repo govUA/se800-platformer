@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 915b8ab68d78643c1ace656543369125
+guid: 310314604018af34e8e4374a3d1739ca
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Perfect DOS VGA 437
+  - Emmenthaler
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
