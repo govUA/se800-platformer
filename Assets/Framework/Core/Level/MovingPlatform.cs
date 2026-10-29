@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Framework.Core.Level
 {
@@ -20,8 +19,7 @@ namespace Framework.Core.Level
         private float _waitTimer;
         private bool _isWaiting;
 
-        // Tracks actors currently standing on the platform
-        private readonly HashSet<Rigidbody2D> _riders = new HashSet<Rigidbody2D>();
+        public Vector2 Velocity { get; private set; }
 
         private void Awake()
         {
@@ -39,10 +37,15 @@ namespace Framework.Core.Level
 
         private void FixedUpdate()
         {
-            if (_worldWaypoints == null || _worldWaypoints.Length < 2) return;
+            if (_worldWaypoints == null || _worldWaypoints.Length < 2)
+            {
+                Velocity = Vector2.zero;
+                return;
+            }
 
             if (_isWaiting)
             {
+                Velocity = Vector2.zero;
                 _waitTimer -= Time.fixedDeltaTime;
                 if (_waitTimer <= 0f) _isWaiting = false;
                 return;
@@ -50,18 +53,9 @@ namespace Framework.Core.Level
 
             Vector2 target = _worldWaypoints[_currentWaypointIndex];
             Vector2 currentPosition = _rb.position;
-
             Vector2 newPosition = Vector2.MoveTowards(currentPosition, target, speed * Time.fixedDeltaTime);
-            Vector2 deltaDisplacement = newPosition - currentPosition;
 
-            // Carry all standing actors along with the platform's motion
-            foreach (Rigidbody2D rider in _riders)
-            {
-                if (rider != null)
-                {
-                    rider.position += deltaDisplacement;
-                }
-            }
+            Velocity = (newPosition - currentPosition) / Time.fixedDeltaTime;
 
             _rb.MovePosition(newPosition);
 
@@ -70,28 +64,7 @@ namespace Framework.Core.Level
                 _currentWaypointIndex = (_currentWaypointIndex + 1) % _worldWaypoints.Length;
                 _isWaiting = true;
                 _waitTimer = waitTimeAtWaypoint;
-            }
-        }
-
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            // Register actor if they land on the top surface of the platform
-            if (collision.contacts.Length > 0 && collision.contacts[0].normal.y < -0.5f)
-            {
-                Rigidbody2D riderRb = collision.rigidbody;
-                if (riderRb != null && !_riders.Contains(riderRb))
-                {
-                    _riders.Add(riderRb);
-                }
-            }
-        }
-
-        private void OnCollisionExit2D(Collision2D collision)
-        {
-            Rigidbody2D riderRb = collision.rigidbody;
-            if (riderRb != null && _riders.Contains(riderRb))
-            {
-                _riders.Remove(riderRb);
+                Velocity = Vector2.zero;
             }
         }
 

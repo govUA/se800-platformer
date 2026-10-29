@@ -19,7 +19,7 @@ namespace Framework.Core.Motor
             _rb = GetComponent<Rigidbody2D>();
             _rb.gravityScale = 0f; // Custom gravity is managed entirely via the motor
         }
-        
+
         private void Start()
         {
             if (stats != null) Initialize(stats);
@@ -44,9 +44,10 @@ namespace Framework.Core.Motor
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.y - gravityStep);
         }
 
-        public void MoveHorizontal(float targetSpeed, float rate)
+        public void MoveHorizontal(float targetSpeed, float rate, float baseSurfaceSpeed = 0f)
         {
-            float speedDiff = targetSpeed - _rb.linearVelocity.x;
+            float desiredSpeed = targetSpeed + baseSurfaceSpeed;
+            float speedDiff = desiredSpeed - _rb.linearVelocity.x;
             float movement = speedDiff * Mathf.Min(rate * Time.fixedDeltaTime, 1f);
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x + movement, _rb.linearVelocity.y);
         }

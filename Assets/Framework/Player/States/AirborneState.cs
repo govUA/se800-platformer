@@ -39,8 +39,9 @@ namespace Framework.Player.States
             _coyoteTimer -= Time.deltaTime;
             if (_wallJumpLockoutTimer > 0f) _wallJumpLockoutTimer -= Time.deltaTime;
 
-            // Landing check
-            if (Context.Sensors.IsGrounded && Context.Motor.Velocity.y <= 0.05f)
+            // Allow landing transition even if the platform is rising fast:
+            float verticalTolerance = Mathf.Max(0.1f, Context.Sensors.GroundVelocity.y + 0.1f);
+            if (Context.Sensors.IsGrounded && Context.Motor.Velocity.y <= verticalTolerance)
             {
                 Context.Controller.ChangeState(Context.Controller.GroundedState);
                 return;

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Framework.Core.Level;
 
 namespace Framework.Core.Sensors
 {
@@ -20,13 +21,14 @@ namespace Framework.Core.Sensors
 
         public bool IsGrounded { get; private set; }
         public bool IsOnWall { get; private set; }
-        public int WallDirection { get; private set; } // -1 = Left, 1 = Right, 0 = None
+        public int WallDirection { get; private set; }
         public Vector2 GroundNormal { get; private set; } = Vector2.up;
+        public Vector2 GroundVelocity { get; private set; } = Vector2.zero;
 
         public event Action OnGrounded;
         public event Action OnLeftGround;
 
-        private void Update()
+        private void FixedUpdate()
         {
             PerformGroundCheck();
             PerformWallCheck();
@@ -46,11 +48,19 @@ namespace Framework.Core.Sensors
                 if (slopeHit.collider != null)
                 {
                     GroundNormal = slopeHit.normal;
+                    var platform = slopeHit.collider.GetComponentInParent<MovingPlatform>();
+                    GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
+                }
+                else
+                {
+                    var platform = hit.GetComponentInParent<MovingPlatform>();
+                    GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
                 }
             }
             else
             {
                 GroundNormal = Vector2.up;
+                GroundVelocity = Vector2.zero;
             }
 
             if (!wasGrounded && IsGrounded) OnGrounded?.Invoke();
