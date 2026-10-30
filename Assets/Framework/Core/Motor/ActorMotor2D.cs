@@ -19,7 +19,7 @@ namespace Framework.Core.Motor
             _rb = GetComponent<Rigidbody2D>();
             _rb.gravityScale = 0f; // Custom gravity is managed entirely via the motor
         }
-        
+
         private void Start()
         {
             if (stats != null) Initialize(stats);
@@ -44,9 +44,10 @@ namespace Framework.Core.Motor
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.y - gravityStep);
         }
 
-        public void MoveHorizontal(float targetSpeed, float rate)
+        public void MoveHorizontal(float targetSpeed, float rate, float baseSurfaceSpeed = 0f)
         {
-            float speedDiff = targetSpeed - _rb.linearVelocity.x;
+            float desiredSpeed = targetSpeed + baseSurfaceSpeed;
+            float speedDiff = desiredSpeed - _rb.linearVelocity.x;
             float movement = speedDiff * Mathf.Min(rate * Time.fixedDeltaTime, 1f);
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x + movement, _rb.linearVelocity.y);
         }
@@ -74,6 +75,35 @@ namespace Framework.Core.Motor
         public void Stop()
         {
             _rb.linearVelocity = Vector2.zero;
+        }
+
+        public void MoveOnSlope(float targetSpeed, float rate, Vector2 groundNormal, float baseSurfaceSpeed = 0f)
+        {
+            // Direction parallel to the slope
+            Vector2 slopeTangent = new Vector2(groundNormal.y, -groundNormal.x).normalized;
+
+            float desiredSpeed = targetSpeed + baseSurfaceSpeed;
+
+            // Target velocity along the slope
+            Vector2 targetVelocity = slopeTangent * desiredSpeed;
+
+            // If on flat ground (or nearly flat), run normal horizontal logic
+            if (Mathf.Abs(groundNormal.x) < 0.05f)
+            {
+                MoveHorizontal(targetSpeed, rate, baseSurfaceSpeed);
+                return;
+            }
+
+            // On slopes: smoothly interpolate velocity towards the target slope vector
+            float step = rate * Time.fixedDeltaTime;
+            Vector2 currentVel = _rb.linearVelocity;
+
+            // Adjust velocity towards the slope projection
+            float newX = Mathf.MoveTowards(currentVel.x, targetVelocity.x,
+                step * Mathf.Abs(targetVelocity.x - currentVel.x + 1f));
+            float newY = targetVelocity.y;
+
+            _rb.linearVelocity = new Vector2(newX, newY);
         }
     }
 }

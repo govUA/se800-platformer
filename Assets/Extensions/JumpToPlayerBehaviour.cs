@@ -11,6 +11,7 @@ namespace Extensions
         private readonly float _jumpForce;
         private readonly float _jumpHeight;
 
+        private EnemyAttack _attack;
         private float _cooldownTimer;
 
         public JumpToPlayerBehaviour(Transform player, float triggerRange, float jumpCooldown, float jumpForce,
@@ -26,10 +27,22 @@ namespace Extensions
         public void Enter(BaseEnemy enemy)
         {
             _cooldownTimer = 0f;
+            _attack = enemy.GetComponent<EnemyAttack>();
         }
 
         public void Tick(BaseEnemy enemy)
         {
+            if (_attack != null)
+            {
+                if (_attack.IsAttacking) return;
+
+                if (_attack.CanAttack())
+                {
+                    _attack.ExecuteAttack();
+                    return;
+                }
+            }
+
             if (_cooldownTimer > 0f) _cooldownTimer -= Time.deltaTime;
 
             if (enemy.Sensors.IsOnWall || enemy.IsLedgeAhead())
@@ -54,7 +67,9 @@ namespace Extensions
 
         public void FixedTick(BaseEnemy enemy)
         {
+            if (_attack != null && _attack.IsAttacking) return;
             if (!enemy.Sensors.IsGrounded) return;
+
             enemy.Motor.SetVelocityX(enemy.FacingDirection * enemy.MoveSpeed);
         }
 

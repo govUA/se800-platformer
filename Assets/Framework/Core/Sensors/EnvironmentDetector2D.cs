@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Framework.Core.Level;
 
 namespace Framework.Core.Sensors
 {
@@ -20,13 +21,14 @@ namespace Framework.Core.Sensors
 
         public bool IsGrounded { get; private set; }
         public bool IsOnWall { get; private set; }
-        public int WallDirection { get; private set; } // -1 = Left, 1 = Right, 0 = None
+        public int WallDirection { get; private set; }
         public Vector2 GroundNormal { get; private set; } = Vector2.up;
+        public Vector2 GroundVelocity { get; private set; } = Vector2.zero;
 
         public event Action OnGrounded;
         public event Action OnLeftGround;
 
-        private void Update()
+        private void FixedUpdate()
         {
             PerformGroundCheck();
             PerformWallCheck();
@@ -37,20 +39,32 @@ namespace Framework.Core.Sensors
             if (groundCheckPoint == null) return;
 
             Collider2D hit = Physics2D.OverlapBox(groundCheckPoint.position, groundCheckSize, 0f, groundLayer);
-            bool wasGrounded = IsGrounded;
-            IsGrounded = hit != null;
 
-            if (IsGrounded)
+            float slopeCheckDistance = 0.35f;
+            RaycastHit2D slopeHit =
+                Physics2D.Raycast(groundCheckPoint.position, Vector2.down, slopeCheckDistance, groundLayer);
+
+            bool wasGrounded = IsGrounded;
+
+            // Consider grounded if either the box touches or the slope raycast detects ground within step range
+            IsGrounded = hit != null || (slopeHit.collider != null && slopeHit.fraction > 0f);
+
+            if (slopeHit.collider != null)
             {
-                RaycastHit2D slopeHit = Physics2D.Raycast(groundCheckPoint.position, Vector2.down, 0.5f, groundLayer);
-                if (slopeHit.collider != null)
-                {
-                    GroundNormal = slopeHit.normal;
-                }
+                GroundNormal = slopeHit.normal;
+                var platform = slopeHit.collider.GetComponentInParent<MovingPlatform>();
+                GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
+            }
+            else if (hit != null)
+            {
+                GroundNormal = Vector2.up;
+                var platform = hit.GetComponentInParent<MovingPlatform>();
+                GroundVelocity = platform != null ? platform.Velocity : Vector2.zero;
             }
             else
             {
                 GroundNormal = Vector2.up;
+                GroundVelocity = Vector2.zero;
             }
 
             if (!wasGrounded && IsGrounded) OnGrounded?.Invoke();

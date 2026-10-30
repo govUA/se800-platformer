@@ -11,6 +11,7 @@ namespace Extensions
         private readonly float _detectionRange;
         private readonly float _chaseSpeedMultiplier;
 
+        private EnemyAttack _attack;
         private bool _isChasing;
 
         public int AnimationBoolHash => _isChasing ? ChasingHash : 0;
@@ -24,15 +25,26 @@ namespace Extensions
 
         public void Enter(BaseEnemy enemy)
         {
+            _attack = enemy.GetComponent<EnemyAttack>();
         }
 
         public void Tick(BaseEnemy enemy)
         {
+            if (_attack != null)
+            {
+                if (_attack.IsAttacking) return;
+
+                if (_attack.CanAttack())
+                {
+                    _attack.ExecuteAttack();
+                    return;
+                }
+            }
+
             float distance = _player != null ? _player.position.x - enemy.transform.position.x : 0f;
             bool wasChasing = _isChasing;
             _isChasing = _player != null && Mathf.Abs(distance) <= _detectionRange;
 
-            // If chase state toggled, re-notify the enemy to update the bridge
             if (wasChasing != _isChasing)
             {
                 enemy.SetBehaviour(this);
@@ -55,6 +67,8 @@ namespace Extensions
 
         public void FixedTick(BaseEnemy enemy)
         {
+            if (_attack != null && _attack.IsAttacking) return;
+
             float speed = enemy.MoveSpeed * (_isChasing ? _chaseSpeedMultiplier : 1f);
             enemy.Motor.SetVelocityX(enemy.FacingDirection * speed);
         }

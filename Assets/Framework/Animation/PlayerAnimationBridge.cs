@@ -33,9 +33,19 @@ namespace Framework.Animation
         {
             if (animator == null || motor == null || sensors == null) return;
 
-            float horizontalSpeed = Mathf.Abs(motor.Velocity.x);
-            animator.SetFloat(AnimationHashes.Speed, horizontalSpeed);
-            animator.SetFloat(AnimationHashes.VerticalVelocity, motor.Velocity.y);
+            // Calculate horizontal speed relative to the moving platform surface
+            float surfaceVelocityX = sensors.IsGrounded ? sensors.GroundVelocity.x : 0f;
+            float relativeHorizontalSpeed = Mathf.Abs(motor.Velocity.x - surfaceVelocityX);
+
+            // Relative speed feeds locomotion transitions (Idle <-> Run)
+            animator.SetFloat(AnimationHashes.Speed, relativeHorizontalSpeed);
+
+            // Vertical velocity relative to platform for fall/jump transitions
+            float surfaceVelocityY = sensors.IsGrounded ? sensors.GroundVelocity.y : 0f;
+            // When solidly grounded, vertical velocity for animation blending is 0 (neutral)
+            float relativeVerticalVelocity = sensors.IsGrounded ? 0f : (motor.Velocity.y - surfaceVelocityY);
+            animator.SetFloat(AnimationHashes.VerticalVelocity, relativeVerticalVelocity);
+
             animator.SetBool(AnimationHashes.IsGrounded, sensors.IsGrounded);
         }
 
