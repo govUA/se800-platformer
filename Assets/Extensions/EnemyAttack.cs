@@ -83,6 +83,18 @@ namespace Extensions
         public void OnAttackFinished()
         {
             _isAttacking = false;
+
+            _enemy.Motor.SetVelocityX(_enemy.FacingDirection * _enemy.MoveSpeed);
+
+            var provider = _enemy.GetComponent<EnemyBehaviourProvider>();
+            if (provider != null)
+            {
+                _enemy.SetBehaviour(provider.CreateBehaviour(_enemy));
+            }
+            else
+            {
+                _enemy.SetBehaviour(new PatrolBehaviour());
+            }
         }
 
         private void OnDrawGizmosSelected()

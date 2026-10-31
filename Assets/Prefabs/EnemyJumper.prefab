@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Extensions.Providers.JumpToPlayerBehaviourProvider
   player: {fileID: 0}
-  jumpTriggerRange: 4
+  jumpTriggerRange: 10
   jumpCooldown: 1.5
-  jumpForce: 6
-  jumpHeight: 9
+  jumpForce: 10
+  jumpHeight: 20

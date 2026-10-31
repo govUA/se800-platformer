@@ -11,14 +11,18 @@ namespace Framework.Enemy
         [Header("Patrol & Edge Settings")] [SerializeField]
         private float moveSpeed = 3f;
 
+        private float _turnCooldownTimer;
+
         [SerializeField] private Transform ledgeCheckPoint;
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private float ledgeCheckDistance = 0.5f;
+        [SerializeField] private float minTurnInterval = 0.25f; // Prevents flip jitter
 
         public ActorMotor2D Motor { get; private set; }
         public EnvironmentDetector2D Sensors { get; private set; }
         public float MoveSpeed => moveSpeed;
         public int FacingDirection { get; private set; } = 1;
+        public bool CanFlip => _turnCooldownTimer <= 0f;
 
         public IEnemyBehaviour CurrentBehaviour => _currentBehaviour;
         public event Action<IEnemyBehaviour> OnBehaviourChanged;
@@ -49,6 +53,7 @@ namespace Framework.Enemy
 
         private void Update()
         {
+            if (_turnCooldownTimer > 0f) _turnCooldownTimer -= Time.deltaTime;
             _currentBehaviour?.Tick(this);
         }
 
@@ -67,6 +72,14 @@ namespace Framework.Enemy
 
         public void FlipDirection()
         {
+            if (_turnCooldownTimer > 0f) return;
+            ForceFlipDirection();
+        }
+
+        // Forces a flip immediately, ignoring turn cooldowns (e.g. For aiming jumps/attacks).
+        public void ForceFlipDirection()
+        {
+            _turnCooldownTimer = minTurnInterval;
             FacingDirection *= -1;
             Vector3 scale = transform.localScale;
             scale.x = Mathf.Abs(scale.x) * FacingDirection;
@@ -75,7 +88,8 @@ namespace Framework.Enemy
 
         public bool IsLedgeAhead()
         {
-            if (ledgeCheckPoint == null) return false;
+            // A ledge check is only valid if the enemy is actually grounded
+            if (!Sensors.IsGrounded || ledgeCheckPoint == null) return false;
             RaycastHit2D hit =
                 Physics2D.Raycast(ledgeCheckPoint.position, Vector2.down, ledgeCheckDistance, groundLayer);
             return hit.collider == null;

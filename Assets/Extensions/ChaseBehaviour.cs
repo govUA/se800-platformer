@@ -55,13 +55,13 @@ namespace Extensions
             bool blocked = enemy.Sensors.IsOnWall || enemy.IsLedgeAhead();
             if (blocked && desiredDirection == enemy.FacingDirection)
             {
-                enemy.FlipDirection();
+                if (enemy.CanFlip) enemy.FlipDirection();
                 return;
             }
 
             if (desiredDirection != 0 && desiredDirection != enemy.FacingDirection)
             {
-                enemy.FlipDirection();
+                if (enemy.CanFlip) enemy.FlipDirection();
             }
         }
 
