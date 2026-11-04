@@ -9,13 +9,24 @@ namespace Extensions
     {
         [SerializeField] private string sceneName;
 
+        private Button _button;
+        
+        //Дуже небезепечна поведінка, яка може привести до небажаного продовження життя цього обʼєкту
+        //Правило таке, якщо ми підписались на щось, маємо відписатись
         private void Awake()
         {
-            GetComponent<Button>().onClick.AddListener(() =>
+            _button = GetComponent<Button>();
+            _button.onClick.AddListener(() =>
             {
                 Time.timeScale = 1f;
                 SceneManager.LoadScene(sceneName);
             });
+        }
+
+        //Ось так
+        private void OnDestroy()
+        {
+            _button.onClick.RemoveAllListeners();
         }
     }
 }

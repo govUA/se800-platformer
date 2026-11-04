@@ -20,7 +20,7 @@ namespace Framework.Core.Input
         }
 
         public bool JumpPressed => Keyboard.current?.spaceKey.wasPressedThisFrame ?? false;
-        public bool JumpHeld => Keyboard.current?.spaceKey.isPressed ?? false;
+        //тут було щось непотрібне
         public bool JumpReleased => Keyboard.current?.spaceKey.wasReleasedThisFrame ?? false;
     }
 }

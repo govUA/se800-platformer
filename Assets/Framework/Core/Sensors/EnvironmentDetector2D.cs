@@ -26,7 +26,6 @@ namespace Framework.Core.Sensors
         public Vector2 GroundVelocity { get; private set; } = Vector2.zero;
 
         public event Action OnGrounded;
-        public event Action OnLeftGround;
 
         private void FixedUpdate()
         {
@@ -68,7 +67,6 @@ namespace Framework.Core.Sensors
             }
 
             if (!wasGrounded && IsGrounded) OnGrounded?.Invoke();
-            if (wasGrounded && !IsGrounded) OnLeftGround?.Invoke();
         }
 
         private void PerformWallCheck()
