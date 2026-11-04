@@ -22,7 +22,6 @@ namespace Extensions
         private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
         public bool IsAttacking => _isAttacking;
-        public float AttackRange => attackRange;
 
         private void Awake()
         {
@@ -32,6 +31,8 @@ namespace Extensions
 
         private void Start()
         {
+            //Нащо кожному мобу знати про гравця  самого початку - підійде
+            //інша справа, але в будь якому випадку не найкращй спосіб шукати гравця
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
             {
@@ -70,8 +71,7 @@ namespace Extensions
             Collider2D playerHit = Physics2D.OverlapCircle(transform.position, attackRange, playerLayer);
             if (playerHit != null)
             {
-                var deathReceiver = playerHit.GetComponentInParent<PlayerDeathReceiver>();
-                if (deathReceiver != null && !deathReceiver.IsDead)
+                if (playerHit.TryGetComponent(out PlayerDeathReceiver deathReceiver) && !deathReceiver.IsDead)//I
                 {
                     float hitDir = Mathf.Sign(playerHit.transform.position.x - transform.position.x);
                     Vector2 impulse = new Vector2(knockbackToPlayer.x * hitDir, knockbackToPlayer.y);
@@ -86,6 +86,7 @@ namespace Extensions
 
             _enemy.Motor.SetVelocityX(_enemy.FacingDirection * _enemy.MoveSpeed);
 
+            
             var provider = _enemy.GetComponent<EnemyBehaviourProvider>();
             if (provider != null)
             {

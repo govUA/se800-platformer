@@ -35,7 +35,7 @@ namespace Extensions
         private PlayerAnimationBridge _animationBridge;
         private bool _isDead;
 
-        public bool IsDead => _isDead;
+        public bool IsDead => _isDead; //Замість цього мона виключити симуляцію Rigidbody 
 
         private void Awake()
         {

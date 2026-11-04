@@ -3,8 +3,8 @@
     public interface IInputProvider
     {
         float HorizontalInput { get; }
-        bool JumpPressed { get; }
-        bool JumpHeld { get; }
+        bool JumpPressed { get; } 
+        //тут було щось непотрібне
         bool JumpReleased { get; }
     }
 }

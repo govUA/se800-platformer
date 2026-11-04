@@ -2,6 +2,7 @@
 
 namespace Framework.Enemy
 {
+    //Щось зайве мабуть
     public class IdleBehaviour : IEnemyBehaviour
     {
         private float _timer;

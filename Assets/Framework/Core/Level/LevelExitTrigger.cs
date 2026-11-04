@@ -23,6 +23,7 @@ namespace Framework.Core.Level
             if (_isTriggered) return;
 
             // Confirm trigger source is the player
+            //Дві перевірки одного і того ж самого + можна матрицею взаємодії без перевірок вирішити
             if (other.GetComponentInParent<PlayerController>() != null || other.CompareTag("Player"))
             {
                 _isTriggered = true;
@@ -32,6 +33,7 @@ namespace Framework.Core.Level
 
         private void LoadNextLevel()
         {
+            //Не думаю що це має бути відповідальністю LevelExitTrigger, бо в нас може бути багато джерел зміни сцени
             if (!string.IsNullOrEmpty(nextSceneName) && Application.CanStreamedLevelBeLoaded(nextSceneName))
             {
                 SceneManager.LoadScene(nextSceneName);

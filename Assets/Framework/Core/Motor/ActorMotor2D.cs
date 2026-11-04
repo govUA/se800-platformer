@@ -12,8 +12,7 @@ namespace Framework.Core.Motor
         private float _currentGravityMultiplier = 1f;
 
         public Vector2 Velocity => _rb.linearVelocity;
-        public float TargetGravityMultiplier => _currentGravityMultiplier;
-
+      
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();

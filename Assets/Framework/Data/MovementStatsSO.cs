@@ -5,10 +5,9 @@ namespace Framework.Data
     [CreateAssetMenu(fileName = "MovementStats", menuName = "Platformer Framework/Movement Stats")]
     public class MovementStatsSO : ScriptableObject
     {
+        //бачу зайве, та ще й все паблік [field: SerializedField]
         [Header("Horizontal Movement")] [Tooltip("Standard walking top speed")]
         public float walkSpeed = 8f;
-
-        [Tooltip("Max sprint speed")] public float sprintSpeed = 14f;
 
         [Tooltip("How fast horizontal speed reaches target (m/s^2)")]
         public float acceleration = 65f;

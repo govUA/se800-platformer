@@ -4,6 +4,7 @@ using Framework.Player;
 
 namespace Extensions.Providers
 {
+    
     public class JumpToPlayerBehaviourProvider : EnemyBehaviourProvider
     {
         [SerializeField] private Transform player;
@@ -16,6 +17,7 @@ namespace Extensions.Providers
         {
             if (player == null)
             {
+                //Трошки крюк виходить, замість того що б працювати з параметрами напряму з JumpToPlayerBehaviour
                 PlayerController playerController = Object.FindFirstObjectByType<PlayerController>();
                 if (playerController != null) player = playerController.transform;
             }
